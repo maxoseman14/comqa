@@ -24,27 +24,19 @@ public class stepDefs {
     static ExtentReports reports;
     ExtentTest test;
 
-    @BeforeClass
-    public void setUpReports (){
-        reports = new ExtentReports("C:\\testReports\\report.html", true);
-    }
-
-    @AfterClass
-    public static void tearDownReports (){
-        reports.flush();
-    }
-
 
     @Before
     public void setUp (){
         System.setProperty("webdriver.chrome.driver","C:\\chromedriver\\chromedriver_win32/chromedriver.exe");
         driver = new ChromeDriver();
         driver.manage().window().maximize();
+        reports = new ExtentReports("C:\\testReports\\report.html", true);
     }
 
     @After
     public void tearDown (){
         reports.endTest(test);
+        reports.flush();
         driver.quit();
     }
 
@@ -55,8 +47,11 @@ public class stepDefs {
 
     @When("^I navigate to the 'Menu' page$")
     public void i_navigate_to_the_Menu_page() {
+        test = reports.startTest("Browse Products");
+
         homePage home = PageFactory.initElements(driver, homePage.class);
         home.menuClick();
+        test.log(LogStatus.INFO, "menu button clicked");
     }
 
     @Then("^I can browse a list of the available products\\.$")
@@ -75,17 +70,26 @@ public class stepDefs {
 
     @When("^I click the checkout button$")
     public void i_click_the_checkout_button() {
+        test = reports.startTest("Browse Products");
         stepDefs steps = new stepDefs();
         steps.i_navigate_to_the_Menu_page();
         menuPage menu = PageFactory.initElements(driver, menuPage.class);
         menu.clickCheckOut();
+        test.log(LogStatus.INFO, "checkout button clicked");
     }
 
 
     @Then("^I am taken to the checkout page$")
     public void i_am_taken_to_the_checkout_page()  {
+        test = reports.startTest("Checkout Page");
+        checkoutPage checkout = PageFactory.initElements(driver, checkoutPage.class);
 
-        assertEquals("Pay with Credit Card or Log In", driver.findElement(By.xpath("//*[@id=\"wsb-element-00000000-0000-0000-0000-000451989411\"]/div/p/span/strong")).getText());
+        if(checkout.payText()){
+            test.log(LogStatus.PASS, "Checkout Page Opens" );
+        } else {
+            test.log(LogStatus.FAIL, "Checkout Page did not open");
+        }
+        assertTrue(checkout.payText());
     }
 
 }

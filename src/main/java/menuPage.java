@@ -6,7 +6,7 @@ public class menuPage {
     @FindBy (xpath = "//*[@id=\"wsb-button-00000000-0000-0000-0000-000451955160\"]/span")
     WebElement checkOut;
 
-    @FindBy (xpath = "wsb-element-00000000-0000-0000-0000-000453230000\"]/div/p/span/span/strong")
+    @FindBy (xpath = "//*[@id=\"wsb-element-00000000-0000-0000-0000-000453230000\"]/div/p/span/span/strong")
     WebElement greenText;
 
 
